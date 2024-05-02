@@ -67,6 +67,38 @@ void mergeSort(int* arr, int l, int r) {
 }
 
 
+void parallelBubbleSort(int* arr, int n) {
+    int i, j;
+    #pragma omp parallel for private(i, j)
+    for (i = 0; i < n-1; i++) {
+        for (j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+void parallelMergeSort(int* arr, int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+
+        #pragma omp parallel sections
+        {
+            #pragma omp section
+            parallelMergeSort(arr, l, m);
+            #pragma omp section
+            parallelMergeSort(arr, m + 1, r);
+        }
+
+        merge(arr, l, m, r);
+    }
+}
+
+
+
 
 
 
@@ -91,8 +123,19 @@ int main() {
     end = clock();
     printf("Merge Sort Time: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
 
+
     
+    start = clock();
+    parallelBubbleSort(arr, n);
+    end = clock();
+    printf("Parallel Bubble Sort Time: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+    start = clock();
+    parallelMergeSort(arr, 0, n - 1);
+    end = clock();
+    printf("Parallel Merge Sort Time: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
     free(arr);
 
     return 0;
 }
+

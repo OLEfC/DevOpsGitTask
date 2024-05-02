@@ -1,0 +1,1 @@
+Sequential Bubble Sort Time: 8.627210 Sequential Merge Sort Time: 0.007361 Parallel Bubble Sort Time: 3.151444 Parallel Merge Sort Time: 0.044242
